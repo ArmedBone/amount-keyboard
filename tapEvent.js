@@ -2,7 +2,7 @@ if (!HTMLElement.prototype.addTapEvent) {
     HTMLElement.prototype.addTapEvent = function(callback) {
         var tapStartTime = 0,
             tapEndTime = 0,
-            tapTime = 100, //tap等待时间，在此事件下松开可触发方法
+            tapTime = 1000, //tap等待时间，在此事件下松开可触发方法
             tapStartClientX = 0,
             tapStartClientY = 0,
             tapEndClientX = 0,

@@ -68,7 +68,7 @@ function KeyBoard(amount){
     this.container.innerHTML = keyBoardTemplate;
     this.amount = amount;
     this.btns = Array.prototype.slice.call(this.container.querySelectorAll(".bc-amount-btn"));
-    this._btnsBindClickEvent()
+    //this._btnsBindClickEvent()
 }
 String.prototype.splice = function(start, newStr) {
     return this.slice(0, start) + newStr + this.slice(start);
@@ -182,21 +182,7 @@ document.onclick=function (event) {
     if(!event.target.matches("*[class|='bc-amount']")){
         amount.blur();
     }
-    //阻止双击放大
-    var lastTouchEnd = 0;
-    document.addEventListener('touchstart', function(event) {
-        if (event.touches.length > 1) {
-            event.preventDefault();
-        } });
-    document.addEventListener('touchend', function(event) {
-        var now = (new Date()).getTime();
-        if (now - lastTouchEnd <= 300) {
-            event.preventDefault();
-        }else{
-            lastTouchEnd = now;
-        }
 
-    }, false);
 // 阻止双指放大
     document.addEventListener('gesturestart', function(event) { event.preventDefault(); });
 }

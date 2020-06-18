@@ -189,9 +189,13 @@ document.onclick=function (event) {
             event.preventDefault();
         } });
     document.addEventListener('touchend', function(event) {
-        var now = (new Date()).getTime(); if (now - lastTouchEnd <= 300) {
+        var now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
             event.preventDefault();
-        } lastTouchEnd = now;
+        }else{
+            lastTouchEnd = now;
+        }
+
     }, false);
 // 阻止双指放大
     document.addEventListener('gesturestart', function(event) { event.preventDefault(); });

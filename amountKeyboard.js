@@ -78,6 +78,7 @@ KeyBoard.prototype._btnsBindClickEvent=function(){
     this.btns.forEach(function (item) {
         item.addTapEvent(function () {
             let num = this.innerText;
+            console.log(this)
             if(_this.amount.cursor.getCursor(_this.amount.container)){
                 if(num != 'x'){
                     let children = Array.prototype.slice.call(_this.amount.container.querySelectorAll('div'));

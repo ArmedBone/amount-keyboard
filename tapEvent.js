@@ -27,7 +27,7 @@ if (!HTMLElement.prototype.addTapEvent) {
         this.addEventListener('touchend', function() {
             tapEndTime = event.timeStamp;
             if (!cancleClick && (tapEndTime - tapStartTime) <= tapTime) {
-                callback();
+                callback.call(this);
             }
         })
     }

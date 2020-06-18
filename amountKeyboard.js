@@ -68,7 +68,7 @@ function KeyBoard(amount){
     this.container.innerHTML = keyBoardTemplate;
     this.amount = amount;
     this.btns = Array.prototype.slice.call(this.container.querySelectorAll(".bc-amount-btn"));
-    //this._btnsBindClickEvent()
+    this._btnsBindClickEvent()
 }
 String.prototype.splice = function(start, newStr) {
     return this.slice(0, start) + newStr + this.slice(start);
@@ -76,7 +76,7 @@ String.prototype.splice = function(start, newStr) {
 KeyBoard.prototype._btnsBindClickEvent=function(){
     let _this = this;
     this.btns.forEach(function (item) {
-        item.addEventListener("click",function () {
+        item.addTapEvent(function () {
             let num = this.innerText;
             if(_this.amount.cursor.getCursor(_this.amount.container)){
                 if(num != 'x'){

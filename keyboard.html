@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title>标题</title>
+    <link rel="stylesheet" href="index.css">
+    <style>
+        /*input { pointer-events: bounding-box; }*/
+        ul,li{
+            padding: 0;
+            margin:0;
+            list-style: none;
+            line-height: 50px;
+            text-align: center;
+        }
+        .bc-amount-keyboard{
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            overflow: hidden;
+            background-color: #e5e5e5;
+            display: none;
+            padding-top: 10px;
+        }
+        .bc-amount-keyboard li{
+            height: 50px;
+            width: 30%;
+            margin-left:2.5%;
+            margin-bottom: 10px;
+            background-color: white;
+            border-radius:4px;
+            float: left;
+            font-size: 24px;
+            color: #666666;
+        }
+        .bc-amount-field{
+            width: 100%;
+            height: 60px;
+            background-color: #e5e5e5;
+        }
+        .bc-amount-field-container{
+            white-space: nowrap;
+            min-height: 60px;
+            position: relative;
+            line-height: 60px;
+            font-size: 32px;
+            padding: 0 10px;
+            overflow: hidden;
+        }
+        .bc-amount-field-container.blur:after{
+            position: absolute;
+            top:0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background-color: transparent;
+            content: "";
+            display: block;
+        }
+        .bc-amount-field-container>div{
+            display: inline-block;
+        }
+        .bc-amount-field-container>.bc-amount-field-cursor{
+            width: 1px;
+            height:40px;
+            opacity: 0;
+            background-color: black;
+            animation: twinkle 1s infinite;
+            vertical-align: middle;
+            margin-left: 4px;
+            margin-top: -10px;
+            margin-right: 4px;
+        }
+        @keyframes twinkle {
+            form {
+                opacity: 0;
+            }
+            to{
+                opacity: 100;
+            }
+        }
+    </style>
+</head>
+
+<body>
+移动端数字键盘输入
+<div class="bc-amount-field">
+    <div class="bc-amount-field-container">
+
+    </div>
+</div>
+<div class="bc-amount-keyboard">
+
+</div>
+</body>
+<script src="jquery.js"></script>
+<script>
+    var amountReg = /((^[1-9]\d*)|^0)(\.\d{0,2}){0,1}$/;
+    var textFieldContainer = document.querySelector('.bc-amount-field-container');
+
+  /* $('input').on("keyup",function (event) {
+        console.log(event)
+   })*/
+
+    function Cursor() {
+        this.cursor =null;
+    }
+    Cursor.prototype.create=function(){
+        this.cursor = document.createElement('div');
+        this.cursor.className = 'bc-amount-field-cursor';
+        return  this.cursor;
+    };
+    Cursor.prototype.focus = function (parent) {
+        parent.appendChild(this.create());
+    }
+    Cursor.prototype.getCursor=function (parent) {
+        return  this.cursor || parent.querySelector('.bc-amount-field-cursor');
+    }
+
+    function Node(num,AmountField,Cursor) {
+        this.$el = document.createElement('div');
+        this.$el.className = "bc-amount-number";
+        this.$el.innerText = num;
+        this.$el.instance = this;
+        this.AmountField = AmountField;
+        this.Cursor = Cursor;
+        this.bindClick();
+    }
+    Node.prototype.bindClick=function () {
+        var _this = this;
+        this.$el.addEventListener('click',function (event) {
+            event.stopPropagation();
+            _this.cursorInsert();
+        })
+    }
+    Node.prototype.cursorInsert=function(){
+        let container = this.AmountField.container;
+        let cursor = this.Cursor.getCursor(container);
+        container.removeChild(cursor);
+        let preCursor = this.Cursor.create();
+        container.insertBefore(preCursor,this.$el);
+    }
+
+    function AmountField(){
+        this.container = document.querySelector(".bc-amount-field-container");
+        this.cursor = new Cursor();
+        this.keyboard = new KeyBoard(this);
+        this.bindEvents()
+    }
+    AmountField.prototype.isFocus=function(){
+        let cursor = this.cursor.getCursor(this.container);
+        return cursor!=null;
+    }
+    AmountField.prototype.bindEvents= function () {
+        var _this =this;
+        this.container.addEventListener('click',function () {
+            if(!_this.isFocus()){
+                _this.focus();
+            }else{
+                let cursor = _this.cursor.getCursor(this.container);
+                _this.container.removeChild(cursor);
+                let newCursor = _this.cursor.create();
+                _this.container.appendChild(newCursor);
+            }
+        })
+    }
+    AmountField.prototype.focus=function () {
+        this.cursor.focus(this.container);
+        this.keyboard.show();
+        this.container.classList.add("focus");
+        this.container.classList.remove('blur');
+    }
+    AmountField.prototype.insert=function (param) {
+        let node = new Node(param,this,this.cursor);
+        let cursor = this.cursor.getCursor(this.container);
+        this.container.insertBefore(node.$el,cursor);
+    }
+    AmountField.prototype.delete=function(){
+        let cursor = this.cursor.getCursor(this.container);
+        let previous = cursor.previousElementSibling;
+        if(previous==null)return;
+        previous.parentNode.removeChild(previous);
+    }
+    AmountField.prototype.blur = function () {
+       let cursor = this.cursor.getCursor(this.container);
+       this.container.removeChild(cursor);
+       this.cursor.cursor=null;
+       this.keyboard.hide();
+        this.container.classList.add("blur");
+        this.container.classList.remove('focus');
+    }
+    const keyBoardTemplate = `
+      <ul class="bc-amount-btns">
+        <li class="bc-amount-btn">1</li>
+        <li class="bc-amount-btn">2</li>
+        <li class="bc-amount-btn">3</li>
+        <li class="bc-amount-btn">4</li>
+        <li class="bc-amount-btn">5</li>
+        <li class="bc-amount-btn">6</li>
+        <li class="bc-amount-btn">7</li>
+        <li class="bc-amount-btn">8</li>
+        <li class="bc-amount-btn">9</li>
+        <li class="bc-amount-btn">.</li>
+        <li class="bc-amount-btn">0</li>
+        <li class="bc-amount-btn">x</li>
+    </ul>
+    `
+    function KeyBoard(amount){
+        this.container = document.querySelector(".bc-amount-keyboard");
+        this.container.innerHTML = keyBoardTemplate;
+        this.amount = amount;
+        this.btns = Array.prototype.slice.call(this.container.querySelectorAll("li.bc-amount-btn"));
+        this._btnsBindClickEvent()
+    }
+    KeyBoard.prototype._btnsBindClickEvent=function(){
+        let _this = this;
+        this.btns.forEach(function (item) {
+            item.addEventListener("click",function () {
+                let num = this.innerText;
+                if(_this.amount.cursor.getCursor(_this.amount.container)){
+                    if(num != 'x'){
+                        let lastValue =_this.amount.container.innerText;
+                        let value = lastValue+num;
+                        if(!amountReg.test(value))return;
+                        _this.amount.insert(num);
+                    }else{
+                        _this.amount.delete();
+                    }
+                }
+
+            })
+        })
+    }
+    KeyBoard.prototype.show=function(){
+        this.container.style.display="block";
+    }
+    KeyBoard.prototype.hide=function(){
+        this.container.style.display="none";
+    }
+    let amount  = new AmountField();
+
+
+
+    document.onclick=function (event) {
+        if(!event.target.matches("*[class|='bc-amount']")){
+            amount.blur();
+            console.log("mayuyu")
+        }
+    }
+</script>
+</html>

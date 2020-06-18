@@ -229,6 +229,9 @@
         this.btns = Array.prototype.slice.call(this.container.querySelectorAll("li.bc-amount-btn"));
         this._btnsBindClickEvent()
     }
+    String.prototype.splice = function(start, newStr) {
+        return this.slice(0, start) + newStr + this.slice(start);
+    };
     KeyBoard.prototype._btnsBindClickEvent=function(){
         let _this = this;
         this.btns.forEach(function (item) {
@@ -236,8 +239,12 @@
                 let num = this.innerText;
                 if(_this.amount.cursor.getCursor(_this.amount.container)){
                     if(num != 'x'){
+                        let children = Array.prototype.slice.call(_this.amount.container.querySelectorAll('div'));
+                        console.log(children)
+                        let index = children.indexOf(_this.amount.cursor.getCursor(_this.amount.container));
                         let lastValue =_this.amount.container.innerText;
-                        let value = lastValue+num;
+                        let value = lastValue.splice(index,num);
+                        console.log(index,lastValue,value)
                         if(!amountReg.test(value))return;
                         _this.amount.insert(num);
                     }else{

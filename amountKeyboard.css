@@ -35,6 +35,13 @@
     -ms-user-select:none;
     user-select:none;
 }
+.bc-amount-keyboard .bc-amount-btn.symbol{
+    background-color: #e5e5e5;
+}
+.bc-amount-keyboard .bc-amount-btn.symbol img.bc-amount-img{
+    width: 20px;
+    vertical-align: initial;
+}
 .bc-amount-field{
     width: 100%;
     height: 60px;

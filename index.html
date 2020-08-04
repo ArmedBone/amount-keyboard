@@ -8,17 +8,12 @@
     <meta content="email=no" name="format-detection">
     <title>标题</title>
     <link rel="stylesheet" href="amountKeyboard.css">
-    <style>
-        html{
-            background-color: #f5f5f5;
-        }
-    </style>
 </head>
 
 <body>
 移动端数字键盘输入
 <div class="bc-amount-field">
-    <div class="bc-amount-field-container">
+    <div style="border-bottom: 1px solid #efefef" class="bc-amount-field-container">
 
     </div>
 </div>
@@ -26,9 +21,10 @@
 </body>
 <script src="tapEvent.js"></script>
 <script src="amountKeyboard.js"></script>
+
 <script>
 
-    let amount  = new AmountField(".bc-amount-field-container");
+   var amount  = new AmountField(".bc-amount-field-container");
 
 
 </script>
